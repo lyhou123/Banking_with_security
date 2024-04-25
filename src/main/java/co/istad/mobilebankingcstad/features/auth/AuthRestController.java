@@ -11,28 +11,33 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
+import io.swagger.v3.oas.annotations.security.SecurityScheme;
+import io.swagger.v3.oas.annotations.security.SecuritySchemes;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+
 @RequestMapping("api/v1/auth")
 @RequiredArgsConstructor
+@SecurityRequirements(value = {})
 public class AuthRestController {
 
     private final AuthServiceImpl authService;
 
     private final UserService userService;
 
-   @PostMapping("/login")
+    @PostMapping("/login")
     public BaseResponse<AuthRespone> login(@RequestBody AuthRequest authRequest)
     {
         return BaseResponse.<AuthRespone>ok()
                 .setPayload(authService.login(authRequest));
     }
 
-    @PostMapping("/signup")
+   @PostMapping("/signup")
     public String signup()
     {
         return "signup";
@@ -44,7 +49,6 @@ public class AuthRestController {
         return BaseResponse.<AuthRespone>ok()
                 .setPayload(authService.refreshToken(refresTokenRequest));
     }
-
 
 
     @PostMapping

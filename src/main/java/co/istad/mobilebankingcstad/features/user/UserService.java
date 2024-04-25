@@ -20,4 +20,6 @@ public interface UserService {
 
     UserResponse enableUser(String id);
 
+    UserResponse getCurrentUserInfo(String id);
+
 }

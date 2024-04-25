@@ -72,4 +72,11 @@ public class UserRestController {
                 .setPayload(userService.enableUser(id));
     }
 
+    @GetMapping("/me/{id}")
+    @Operation(summary = "Get current user")
+    public BaseResponse<UserResponse> getCurrentUser(@PathVariable String id) {
+        return BaseResponse.<UserResponse>ok()
+                .setPayload(userService.getCurrentUserInfo(id));
+    }
+
 }

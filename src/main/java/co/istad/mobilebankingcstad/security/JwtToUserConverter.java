@@ -29,6 +29,10 @@ public class JwtToUserConverter implements Converter<Jwt, UsernamePasswordAuthen
         UserDetail userDetail = new UserDetail();
         userDetail.setUser(user);
 
+         userDetail.getAuthorities().forEach(
+                 authority -> System.out.println(authority.getAuthority())
+         );
+
         return new UsernamePasswordAuthenticationToken(
                 userDetail,
                 "",

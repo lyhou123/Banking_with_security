@@ -8,8 +8,11 @@ import co.istad.mobilebankingcstad.features.user.dto.UserRequest;
 import co.istad.mobilebankingcstad.features.user.dto.UserResponse;
 import co.istad.mobilebankingcstad.features.user.dto.UserUpdateRequest;
 import co.istad.mobilebankingcstad.mapper.UserMapper;
+import co.istad.mobilebankingcstad.security.UserDetail;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -124,6 +127,33 @@ public class UserServiceImpl implements UserService {
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND,
                     "User with id = " + id + " doesn't exist ! "
+            );
+        }
+    }
+
+    @Override
+    public UserResponse getCurrentUserInfo(String id) {
+
+        String userId = "";
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if(authentication.getPrincipal() instanceof UserDetail)
+        {
+            UserDetail userDetail = (UserDetail) authentication.getPrincipal();
+             userId =  userDetail.getUser().getId();
+        }
+        if(userId == id)
+        {
+            return userMapper.toUserResponse(
+                    userRepository.findById(id)
+                            .orElse(null));
+        }
+        else
+        {
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN,
+                    "You are not authorized to access this resource"
             );
         }
     }

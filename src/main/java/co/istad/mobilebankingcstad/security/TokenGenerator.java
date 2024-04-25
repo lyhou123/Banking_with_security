@@ -29,7 +29,7 @@ public class TokenGenerator {
         JwtClaimsSet claims = JwtClaimsSet.builder()
                 .subject(userDetail.getUsername())
                 .issuer("mobile banking cstad")
-                .expiresAt(now.plus(5, ChronoUnit.MINUTES))
+                .expiresAt(now.plus(3, ChronoUnit.HOURS))
                 .issuedAt(now)
                 .build();
 

@@ -3,7 +3,6 @@ package co.istad.mobilebankingcstad.config.security;
 import co.istad.mobilebankingcstad.security.CustomDetailService;
 import co.istad.mobilebankingcstad.security.JwtToUserConverter;
 import co.istad.mobilebankingcstad.security.KeyUtils;
-import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
@@ -15,6 +14,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -30,11 +30,6 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.security.oauth2.server.resource.web.BearerTokenAuthenticationEntryPoint;
 import org.springframework.security.oauth2.server.resource.web.access.BearerTokenAccessDeniedHandler;
 import org.springframework.security.web.SecurityFilterChain;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.NoSuchAlgorithmException;
-import java.security.interfaces.RSAPublicKey;
-import java.util.UUID;
 
 @Configuration
 @EnableWebSecurity
@@ -61,6 +56,12 @@ public class SecurityConfiguration {
                                         "/swagger-resources/**")
                                 .permitAll()
                                 .requestMatchers("/api/v1/auth/**").permitAll()
+                                .requestMatchers(
+                                        HttpMethod.PATCH,
+                                        "/api/v1/users/**").hasRole("ADMIN")
+                                .requestMatchers(
+                                        HttpMethod.DELETE,
+                                        "/api/v1/users/**").hasRole("ADMIN")
                                 .requestMatchers("images/**").permitAll()
                                 .anyRequest().authenticated()
                 )
@@ -142,6 +143,8 @@ public class SecurityConfiguration {
         return provider;
 
     }
+
+
 
 
 }
