@@ -1,28 +1,21 @@
 package co.istad.mobilebankingcstad.features.user;
 
-
-import co.istad.mobilebankingcstad.features.user.dto.UserRequest;
 import co.istad.mobilebankingcstad.features.user.dto.UserResponse;
 import co.istad.mobilebankingcstad.features.user.dto.UserUpdateRequest;
 import co.istad.mobilebankingcstad.utils.BaseResponse;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.ExampleObject;
-import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.validation.annotation.Validated;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
-import org.yaml.snakeyaml.representer.BaseRepresenter;
-
 import java.util.List;
 
 @RestController
 @RequestMapping("api/v1/users")
 @RequiredArgsConstructor
 
-//provide default values for requestbody and params
+//provide default values for request body and params
 public class UserRestController {
     private final UserService userService;
 
@@ -72,11 +65,19 @@ public class UserRestController {
                 .setPayload(userService.enableUser(id));
     }
 
-    @GetMapping("/me/{id}")
+    @GetMapping("/me")
     @Operation(summary = "Get current user")
-    public BaseResponse<UserResponse> getCurrentUser(@PathVariable String id) {
+    public BaseResponse<UserResponse> getCurrentUser(@AuthenticationPrincipal Jwt jwt) {
+        System.out.println("These are the information extracted from jwt : ");
+        System.out.println(jwt.getSubject());
+        System.out.println(jwt.getTokenValue());
+//        System.out.println(jwt.getIssuer());
+
         return BaseResponse.<UserResponse>ok()
-                .setPayload(userService.getCurrentUserInfo(id));
+                .setPayload(
+                        userService.getUserById(jwt.getId())
+                );
+
     }
 
 }

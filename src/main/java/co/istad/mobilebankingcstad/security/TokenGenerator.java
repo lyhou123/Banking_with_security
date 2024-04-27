@@ -30,6 +30,7 @@ public class TokenGenerator {
                 .subject(userDetail.getUsername())
                 .issuer("mobile banking cstad")
                 .expiresAt(now.plus(3, ChronoUnit.HOURS))
+                .id(userDetail.getUser().getId()) //get user id from token to use in the future
                 .issuedAt(now)
                 .build();
 

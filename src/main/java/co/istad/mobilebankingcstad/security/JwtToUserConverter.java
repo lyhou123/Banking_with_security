@@ -9,6 +9,7 @@ import lombok.Setter;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
@@ -17,25 +18,37 @@ import org.springframework.stereotype.Service;
 @Data
 @RequiredArgsConstructor
 @Component
-public class JwtToUserConverter implements Converter<Jwt, UsernamePasswordAuthenticationToken> {
+public class JwtToUserConverter implements Converter<Jwt, JwtAuthenticationToken> {
 
     private final  UserRepository userRepository;
 
     @Override
-    public UsernamePasswordAuthenticationToken convert(Jwt source) {
-        User user = userRepository.findByEmail(source.getSubject()).orElseThrow(()->
+    public JwtAuthenticationToken convert(Jwt source) {
+        var User = userRepository.findByEmail(source.getSubject()).orElseThrow(()->
                 new IllegalArgumentException("User not found"));
 
         UserDetail userDetail = new UserDetail();
-        userDetail.setUser(user);
 
-         userDetail.getAuthorities().forEach(
-                 authority -> System.out.println(authority.getAuthority())
-         );
+        userDetail.setUser(User);
 
-        return new UsernamePasswordAuthenticationToken(
-                userDetail,
-                "",
-                userDetail.getAuthorities());
+        return new JwtAuthenticationToken(source, userDetail.getAuthorities());
     }
+
+//    @Override
+//    public UsernamePasswordAuthenticationToken convert(Jwt source) {
+//        User user = userRepository.findByEmail(source.getSubject()).orElseThrow(()->
+//                new IllegalArgumentException("User not found"));
+//
+//        UserDetail userDetail = new UserDetail();
+//        userDetail.setUser(user);
+//
+//         userDetail.getAuthorities().forEach(
+//                 authority -> System.out.println(authority.getAuthority())
+//         );
+//
+//        return new UsernamePasswordAuthenticationToken(
+//                userDetail,
+//                "",
+//                userDetail.getAuthorities());
+//    }
 }
