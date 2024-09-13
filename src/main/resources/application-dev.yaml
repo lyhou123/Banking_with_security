@@ -15,7 +15,7 @@ spring:
     username: postgres
     password: lyhou123
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/banking
+    url: jdbc:postgresql://167.172.64.59:3002/deploy
   jpa:
     show-sql: true
     hibernate:
